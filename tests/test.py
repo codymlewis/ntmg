@@ -29,3 +29,5 @@ data = load_mnist()
 data = {t: {'X': data[t]['X'], 'Y': data[t]['Y']} for t in ['train', 'test']}
 data = ntmg.Dataset(data)
 print(data)
+
+print(data.select({"train": [1, 2, 3], "test": [4, 5, 6]}))

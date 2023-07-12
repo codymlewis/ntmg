@@ -43,11 +43,23 @@ class DatasetDict:
 
 
 class Dataset:
-    def __init__(self, data: Dict[str, Dict[str, NDArray]]):
-        self.__data = {k: DatasetDict(v) for k, v in data.items()}
+    def __init__(self, data: Dict[str, Dict[str, NDArray] | DatasetDict]):
+        # print(data)
+        if np.all([isinstance(v, DatasetDict) for v in data.values()]):
+            self.__data = data
+        else:
+            self.__data = {k: DatasetDict(v) for k, v in data.items()}
     
     def __getitem__(self, i: str) -> DatasetDict:
         return self.__data[i]
+
+
+    def __str__(self) -> str:
+        string = "{\n"
+        for k, v in self.__data.items():
+            string += f"\t{k}: {v.short_details()}\n"
+        string += "}"
+        return string
     
     def map(self, mapping_fn: Callable[[Dict[str, NDArray]], Dict[str, NDArray]]) -> Self:
         for v in self.__data.values():
@@ -57,9 +69,5 @@ class Dataset:
     def keys(self) -> Iterable[str]:
         return self.__data.keys()
 
-    def __str__(self) -> str:
-        string = "{\n"
-        for k, v in self.__data.items():
-            string += f"\t{k}: {v.short_details()}\n"
-        string += "}"
-        return string
+    def select(self, idx_dict: Dict[str, int | Iterable[int | bool]]):
+        return Dataset({k: self.__data[k].select(idx) for k, idx in idx_dict.items()})
