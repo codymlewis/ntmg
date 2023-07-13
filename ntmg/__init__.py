@@ -24,6 +24,15 @@ class DatasetDict:
     def map(self, mapping_fn: Callable[[Dict[str, NDArray]], Dict[str, NDArray]]) -> Self:
         self.__data = mapping_fn(self.__data)
         return self
+    
+    def normalise(self, mean: float, std: float) -> Self:
+        for k, v in self.__data.items():
+            if "X" in k:
+                self.__data[k] = (v - mean) / std
+        return self
+
+    def normalize(self, mean: float, std: float) -> Self:
+        return self.normalise(mean, std)
 
     def __getitem__(self, i: str) -> NDArray:
         return self.__data[i]
@@ -44,7 +53,6 @@ class DatasetDict:
 
 class Dataset:
     def __init__(self, data: Dict[str, Dict[str, NDArray] | DatasetDict]):
-        # print(data)
         if np.all([isinstance(v, DatasetDict) for v in data.values()]):
             self.__data = data
         else:
@@ -71,3 +79,12 @@ class Dataset:
 
     def select(self, idx_dict: Dict[str, int | Iterable[int | bool]]):
         return Dataset({k: self.__data[k].select(idx) for k, idx in idx_dict.items()})
+
+    def normalise(self) -> Self:
+        mean = self.__data['train']['X'].mean()
+        std = self.__data['train']['X'].std()
+        self.__data = {k: v.normalise(mean, std) for k, v in self.__data.items()}
+        return self
+    
+    def normalize(self) -> Self:
+        return self.normalise()

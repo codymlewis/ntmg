@@ -31,3 +31,4 @@ data = ntmg.Dataset(data)
 print(data)
 
 print(data.select({"train": [1, 2, 3], "test": [4, 5, 6]}))
+print(data.normalise())
