@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+
+[project]
+name = "ntmg"
+authors = [
+    {name = "Cody Lewis", email = "hello@codymlewis.com"}
+]
+version = "0.0.1"
+description = "A fast and simple data management library for machine learning."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "numpy"
+]
+
+[project.urls]
+repository = "https://github.com/codymlewis/ntmg"
